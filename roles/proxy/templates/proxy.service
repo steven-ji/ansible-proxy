@@ -1,0 +1,18 @@
+[Unit]
+Description=proxy.service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/java/jdk1.8.0_171/bin/java -jar -Xms150m -Xmx150m /opt/app/proxy/agent/1.0.0/bsd-proxy-agent-1.0.0.jar --spring.profiles.active=prod --adsl.validTimeMin={{ time }}
+Type=simple
+EnvironmentFile=/opt/scripts/proxy_env.profile
+Restart=on-failure
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+SuccessExitStatus=143
+
+
+[Install]
+WantedBy=multi-user.target
+

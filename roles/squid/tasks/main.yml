@@ -1,0 +1,22 @@
+- name: Check squid has installed
+  stat: path=/etc/squid/squid.conf
+  register: squid
+- name: Install squid
+  yum:
+    name: squid-3.5.20
+    state: present
+  when: squid.stat.exists == false
+# Cover relate config
+- name: Cover squid.conf
+  template: src=squid.conf dest=/etc/squid/squid.conf
+- name: Cover squid
+  template: src=squid dest=/etc/logrotate.d/squid
+- name: Cover squid ip white
+  template: src=ipwhite.list dest=/etc/squid/ipwhite.list
+# Restart squid
+- name: Restart squid
+  systemd: 
+    name: squid
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

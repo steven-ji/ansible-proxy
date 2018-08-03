@@ -1,0 +1,5 @@
+[shandong]
+ylfnanjing90d ansible_port=20021 ansible_host=117.69.252.200 ansible_ssh_args=ylf-jiangsu-nanjing-d-90
+[shandong:vars]
+# add password
+ansible_ssh_pass=[password]

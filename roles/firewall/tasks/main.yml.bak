@@ -1,0 +1,47 @@
+- name: Stop firewalled
+  systemd:
+    name: firewalld
+    enabled: false
+    state: stopped
+- name: Install iptables
+  yum:
+    name: iptables
+    state: present
+- iptables:
+    action: append
+    chain: INPUT
+    ctstate: NEW
+    protocol: tcp
+    jump: ACCEPT
+    destination_port: 33890
+    comment: 33890 use for mobile network
+- iptables:
+    action: append
+    chain: INPUT
+    ctstate: NEW
+    protocol: tcp
+    jump: ACCEPT
+    destination_port: 3389
+    comment: 3389 use for WCDMA network
+- iptables:
+    action: append
+    chain: INPUT
+    ctstate: NEW
+    protocol: tcp
+    jump: ACCEPT
+    destination_port: 57112
+    comment: 57112 use for squid
+- iptables:
+    action: append
+    chain: INPUT
+    ctstate: NEW
+    protocol: tcp
+    jump: ACCEPT
+    destination_port: 57117
+    comment: 57117 use for squid    
+- name: Restart iptables
+  systemd:
+    name: iptables
+    daemon_reload: yes
+    enabled: yes 
+    state: restarted

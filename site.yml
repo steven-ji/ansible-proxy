@@ -1,0 +1,8 @@
+- name: deploy proxy
+  hosts: all
+  roles:
+   # - {role: beats, tags: "beats"}
+    - {role: squid, tags: "squid"} 
+    - {role: firewall, tags: "firewall"}
+    - {role: proxy, tags: "proxy"}
+    - {role: crontab, tags: "crontab"}

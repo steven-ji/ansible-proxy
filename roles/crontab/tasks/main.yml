@@ -1,0 +1,27 @@
+- name: copy ppp_check_cron
+  template: src=ppp_check_crontab.sh dest=/opt/scripts/
+- name: copy log_cron
+  template: src=log_tar_crontab.sh dest=/opt/scripts/
+- name: add ppp check crontab
+  cron:
+    name: "add ppp check"
+    minute: "*/1"
+    hour: "*"
+    job: ". /etc/profile; sh /opt/scripts/ppp_check_crontab.sh"
+- name: add log crontab
+  cron:
+    name: "add log check"
+    minute: "0"
+    hour: "3"
+    job: ". /etc/profile; sh /opt/scripts/log_tar_crontab.sh"
+- name: insert header file
+  lineinfile:
+    dest=/var/spool/cron/root
+    insertbefore='BOF'
+    line="PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+- name: insert header
+  lineinfile:
+    dest=/var/spool/cron/root
+    insertbefore='BOF'
+    line="SHELL=/bin/sh"
+

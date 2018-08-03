@@ -1,0 +1,48 @@
+# Install Filebeat
+- name: Check filebeat has installed
+  stat: path=/etc/filebeat/filebeat.yml
+  register: filebeat
+- name: copy filebeat.rpm to target
+  copy: src=roles/beats/files/filebeat-6.2.4.rpm dest=/opt/beats
+  when: filebeat.stat.exists == false
+- name: install filebeat
+  yum:
+    name: /opt/beats/filebeat-6.2.4.rpm
+    state: present
+  when: filebeat.stat.exists == false
+# Install Metricbeat
+- name: Check metricbeat has installed
+  stat: path=/etc/metricbeat/metricbeat.yml
+  register: metricbeat
+- name: copy metricbeat.rpm to target
+  copy: src=roles/beats/files/metricbeat-6.2.4.rpm dest=/opt/beats
+  when: metricbeat.stat.exists == false
+- name: install metricbeat
+  yum:
+    name: /opt/beats/metricbeat-6.2.4.rpm
+    state: present
+  when: metricbeat.stat.exists == false
+# Replace filebeat.yml and filebeat.service
+- name: Replace filebeat.yml
+  template: src=filebeat.yml dest=/etc/filebeat/filebeat.yml
+- name: Replace filebeat.service
+  template: src=filebeat.service dest=/usr/lib/systemd/system/filebeat.service
+# Replace metricbeat.yml and metricbeat.service
+- name: Replace metricbeat.yml
+  template: src=metricbeat.yml dest=/etc/metricbeat/metricbeat.yml
+- name: Replace metricbeat.service
+  template: src=metricbeat.service dest=/usr/lib/systemd/system/metricbeat.service
+# Systemd Daemon-reload
+- name: Systemd Daemon-reload
+  systemd: daemon-reload=yes
+# Retart beats
+- name: Restart filebeat
+  systemd: 
+    name: filebeat 
+    state: restarted
+    #enabled: yes
+- name: Restart metricbeat
+  systemd:
+    name: metricbeat
+    state: restarted
+   # enabled: yes
